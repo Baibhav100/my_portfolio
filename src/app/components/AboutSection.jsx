@@ -80,7 +80,7 @@ const TAB_DATA = [
     id: "education",
     content: (
       <ul className="list-disc pl-2">
-        <li>Master's of Computer Applications(MCA)</li>
+        <li>Master&apos;s of Computer Applications(MCA)</li>
         <li>University of Science and Technology, Meghalaya</li>
       </ul>
     ),
