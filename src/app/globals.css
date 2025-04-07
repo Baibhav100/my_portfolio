@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+
+.skills-container {
+  margin: 20px 0;
+}
+
+.skills-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.skill-pill {
+  background-color: rgba(255, 255, 255, 0.1); /* Transparent background with slight white tint */
+  color: #c6bbbb;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: default;
+  border: 2px solid transparent; /* Transparent border */
+  backdrop-filter: blur(10px); /* Glass effect */
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  background-clip: padding-box; /* Ensure background is clipped to padding */
+ 
+}
+
+.skill-pill:hover {
+ /* Slightly more opaque on hover */
+  color: white;
+  border-image: linear-gradient(to right, #a855f7, #6366f1) 2; /* Gradient border */
+
+  border-radius:20px;
+}
