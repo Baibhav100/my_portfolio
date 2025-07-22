@@ -6,7 +6,7 @@ This is a modern and responsive personal portfolio website built with **Next.js*
 
 ## 🚀 Live Demo
 
-👉 [Visit the live website]([https://your-portfolio-url.com](https://my-portfolio-phi-red-79.vercel.app/))
+👉 [Visit the live website](https://your-portfolio-url.com](https://my-portfolio-phi-red-79.vercel.app/)
 
 ---
 
