@@ -1,6 +1,21 @@
-# Portfolio Website
+This is a modern and responsive personal portfolio website built with **Next.js** and **Tailwind CSS**. It showcases my skills, projects, resume, and contact information — all in a clean, animated, and mobile-friendly design.
 
-This is a portfolio website built with Next.js and Tailwind CSS. It showcases your skills, projects, and achievements in an elegant and responsive design.
+
+
+---
+
+## 🚀 Live Demo
+
+👉 [Visit the live website]([https://your-portfolio-url.com](https://my-portfolio-phi-red-79.vercel.app/))
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Deployment**: Vercel
+
 
 ## Installation
 
