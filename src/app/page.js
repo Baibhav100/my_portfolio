@@ -6,6 +6,7 @@ import EmailSection from "./components/EmailSection";
 import Footer from "./components/Footer";
 import AchievementsSection from "./components/AchievementsSection";
 import ExperienceSection from "./components/ExperienceSection";
+import AIChatWidget from "./components/AIChatWidget";
 
 export default function Home() {
   return (
@@ -20,6 +21,8 @@ export default function Home() {
         <EmailSection />
       </div>
       <Footer />
+      {/* This renders the new AI chat widget on the page */}
+      <AIChatWidget />
     </main>
   );
 }
