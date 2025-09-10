@@ -6,7 +6,7 @@ import { knowledgeBase } from '../../data/knowledgeBase';
 const AIChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { sender: 'AI', text: "Hello! I'm an AI assistant. I can answer questions about Baibhav&apos;s professional background and skills. What would you like to know?" }
+        { sender: 'AI', text: "Hello! I'm an AI assistant. I can answer questions about Baibhav's professional background and skills. What would you like to know?" }
     ]);
     const [userInput, setUserInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
