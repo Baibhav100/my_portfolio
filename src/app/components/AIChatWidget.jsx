@@ -6,7 +6,7 @@ import { knowledgeBase } from '../../data/knowledgeBase';
 const AIChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { sender: 'AI', text: "Hello! I'm an AI assistant. I can answer questions about Baibhav's professional background and skills. What would you like to know?" }
+        { sender: 'AI', text: "Hello! I&apos;m an AI assistant. I can answer questions about Baibhav&apos;s professional background and skills. What would you like to know?" }
     ]);
     const [userInput, setUserInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -150,7 +150,7 @@ const AIChatWidget = () => {
                     <header className="p-4 bg-gradient-to-r from-purple-800 to-purple-400/70 text-white text-center rounded-t-2xl flex justify-between items-center border-b border-white/20">
                         <div className="flex items-center space-x-2">
                             <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                            <h1 className="text-md">Baibhav's AI Assistant</h1>
+                            <h1 className="text-md">Baibhav&apos;s AI Assistant</h1>
                         </div>
                         <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white transition-colors duration-200 focus:outline-none">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -162,7 +162,7 @@ const AIChatWidget = () => {
                     <div id="chat-window" className="flex-1 p-4 overflow-y-auto space-y-4 bg-gradient-to-b from-white/8 to-transparent">
                         {messages.map((msg, index) => (
                             <div key={index} className={`flex ${msg.sender === 'AI' ? 'justify-start' : 'justify-end'}`}>
-                                <div className={`p-3 rounded-2xl max-w-[80%] ${msg.sender === 'AI' ? 'bg-purple-500 text-white-800 backdrop-blur-sm' : 'bg-purple-300 text-gray-600 backdrop-blur-sm'}`}>
+                                <div className={`p-3 rounded-2xl max-w-[80%] ${msg.sender === 'AI' ? 'bg-purple-500 text-white backdrop-blur-sm' : 'bg-purple-300 text-gray-600 backdrop-blur-sm'}`}>
                                     {msg.text}
                                 </div>
                             </div>
@@ -190,7 +190,7 @@ const AIChatWidget = () => {
                         <button 
                             type="submit" 
                             disabled={isLoading}
-                            className="bg-gradient-to-r from-purple-800 to-purple-600/80 text-white p-2 rounded-xl hover:from-blue-700/80 hover:to-purple-700/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm">
+                            className="bg-gradient-to-r from-purple-800 to-purple-600/80 text-white p-2 rounded-xl hover:to-purple-900 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
                             </svg>
@@ -198,28 +198,26 @@ const AIChatWidget = () => {
                     </form>
                 </div>
             ) : (
-              <div className="relative inline-flex items-center">
-  {/* Snackbar */}
-  <div className="absolute left-[-120px] top-1/2 -translate-y-1/2 bg-gray-800 text-white text-sm px-3 py-2 rounded-lg shadow-lg whitespace-nowrap
-                  before:content-[''] before:absolute before:top-1/2 before:-right-2 before:-translate-y-1/2
-                  before:border-y-8 before:border-y-transparent before:border-l-8 before:border-l-gray-800 animate-bounce">
-    Talk with me!
-  </div>
+                <div className="relative inline-flex items-center">
+                    {/* Snackbar */}
+                    <div className="absolute left-[-120px] top-1/2 -translate-y-1/2 bg-gray-800 text-white text-sm px-3 py-2 rounded-lg shadow-lg whitespace-nowrap
+                        before:content-[''] before:absolute before:top-1/2 before:-right-2 before:-translate-y-1/2
+                        before:border-y-8 before:border-y-transparent before:border-l-8 before:border-l-gray-800 animate-bounce">
+                        Talk with me!
+                    </div>
 
-  {/* Button */}
-  <button
-    onClick={() => setIsOpen(true)}
-    className="p-4 bg-gradient-to-r from-purple-800 to-purple-600 text-white rounded-full shadow-lg hover:to-purple-900 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 backdrop-blur-sm border border-white/20"
-  >
-    <img
-      src="images/Profile.png"
-      alt="icon"
-      className="w-7 h-7 object-contain"
-    />
-  </button>
-</div>
-
-
+                    {/* Button */}
+                    <button
+                        onClick={() => setIsOpen(true)}
+                        className="p-4 bg-gradient-to-r from-purple-800 to-purple-600 text-white rounded-full shadow-lg hover:to-purple-900 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 backdrop-blur-sm border border-white/20"
+                    >
+                        <img
+                            src="images/Profile.png"
+                            alt="icon"
+                            className="w-7 h-7 object-contain"
+                        />
+                    </button>
+                </div>
             )}
         </div>
     );
