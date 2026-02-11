@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
+import { Bot } from 'lucide-react';
 import { knowledgeBase } from '../../data/knowledgeBase';
 
 const AIChatWidget = () => {
@@ -186,11 +187,7 @@ const AIChatWidget = () => {
                         onClick={() => setIsOpen(true)}
                         className="p-4 bg-gradient-to-r from-purple-800 to-purple-600 text-white rounded-full shadow-lg hover:to-purple-900 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 backdrop-blur-sm border border-white/20"
                     >
-                        <img
-                            src="/images/Baibhav.png"
-                            alt="icon"
-                            className="w-7 h-7 object-contain"
-                        />
+                        <Bot className="w-7 h-7 text-white" />
                     </button>
                 </div>
             )}
