@@ -29,6 +29,7 @@ const AIChatWidget = () => {
     // Purely local matching system to replace LLM
     const findLocalAnswer = (query) => {
         const lowerCaseQuery = query.toLowerCase();
+        const queryWords = lowerCaseQuery.split(/[\s,?.!]+/).filter(word => word.length > 2);
 
         // Priority 1: Direct identity/contact matches
         if (lowerCaseQuery.includes('name') || lowerCaseQuery.includes('who are you')) {
@@ -38,28 +39,44 @@ const AIChatWidget = () => {
             return "You can reach Baibhav at baibhavrajkumar1999@gmail.com or (+91) 7086041934.";
         }
 
-        // Priority 2: Filter knowledge base for relevant sentences
-        const relevantSnippets = knowledgeBase.filter(item => {
+        // Priority 2: Broad Keyword Matching with Context
+        let matchingIndices = new Set();
+
+        knowledgeBase.forEach((item, index) => {
             const itemLower = item.toLowerCase();
-            // Match any significant word from the query
-            const queryWords = lowerCaseQuery.split(' ').filter(word => word.length > 3);
-            return queryWords.some(word => itemLower.includes(word));
+            if (queryWords.some(word => itemLower.includes(word))) {
+                matchingIndices.add(index);
+                // If it's a short header (like "Education" or "Projects"), include the next items
+                if (item.length < 20) {
+                    for (let i = 1; i <= 3; i++) {
+                        if (index + i < knowledgeBase.length) matchingIndices.add(index + i);
+                    }
+                }
+            }
         });
 
-        if (relevantSnippets.length > 0) {
-            // Join the 3 most relevant matches
-            return relevantSnippets.slice(0, 3).join('\n\n');
+        if (matchingIndices.size > 0) {
+            const result = Array.from(matchingIndices)
+                .sort((a, b) => a - b)
+                .map(index => knowledgeBase[index])
+                .filter(item => item.length > 5) // Filter out very short remnants
+                .slice(0, 6); // Cap the response length
+
+            return result.join('\n\n');
         }
 
-        // Priority 3: Category based fallback
-        if (lowerCaseQuery.includes('skill')) {
-            return "Key Skills: " + knowledgeBase.find(i => i.includes("React.js, Next.js"));
+        // Priority 3: Category based fallback (Slightly broader)
+        if (lowerCaseQuery.includes('skill') || lowerCaseQuery.includes('tech') || lowerCaseQuery.includes('stack')) {
+            return "Knowledge Base: " + knowledgeBase.find(i => i.includes("React.js, Next.js"));
         }
         if (lowerCaseQuery.includes('project') || lowerCaseQuery.includes('work') || lowerCaseQuery.includes('experience')) {
-            return "Baibhav has over 3 years of experience. Recent projects include Vision-Based PC Automation, Speech to Action System, and an Electric Vehicle Data Analysis dashboard.";
+            return "Baibhav has 3+ years of experience. Notable projects: Vision-Based PC Automation, Speech to Action System, YouTube Clone, and Dating App mockup.";
+        }
+        if (lowerCaseQuery.includes('education') || lowerCaseQuery.includes('college') || lowerCaseQuery.includes('study')) {
+            return "Baibhav holds an MCA from USTM (2023) and a BCA from K C Das Commerce College (2021).";
         }
 
-        return "I'm sorry, I couldn't find a specific answer for that in Baibhav's resume. Could you try asking about his skills, experience, or projects?";
+        return "I couldn't find a direct match. Baibhav specializes in Fullstack Development (React/Next.js/Node.js) and AI/ML. Try asking about his specific projects, education, or skills!";
     };
 
     const handleSendMessage = async (e) => {
@@ -103,16 +120,16 @@ const AIChatWidget = () => {
                                 <div className={`flex items-end gap-2 ${msg.sender === 'AI' ? 'flex-row' : 'flex-row-reverse'}`}>
                                     {/* Avatar/Icon Indicator */}
                                     <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${msg.sender === 'AI'
-                                            ? 'bg-purple-600 text-white'
-                                            : 'bg-emerald-500 text-white'
+                                        ? 'bg-purple-600 text-white'
+                                        : 'bg-emerald-500 text-white'
                                         }`}>
                                         {msg.sender === 'AI' ? 'AI' : 'U'}
                                     </div>
 
                                     {/* Message Bubble */}
                                     <div className={`px-4 py-2.5 rounded-2xl max-w-[85%] text-sm leading-relaxed shadow-sm transition-all hover:shadow-md ${msg.sender === 'AI'
-                                            ? 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200/50 dark:border-gray-700/50 rounded-bl-sm'
-                                            : 'bg-gradient-to-br from-purple-700 to-indigo-600 text-white rounded-br-sm'
+                                        ? 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200/50 dark:border-gray-700/50 rounded-bl-sm'
+                                        : 'bg-gradient-to-br from-purple-700 to-indigo-600 text-white rounded-br-sm'
                                         }`}>
                                         {msg.text}
                                     </div>
