@@ -33,9 +33,11 @@ const Navbar = () => {
       <div className="flex container lg:py-4 flex-wrap items-center justify-between mx-auto px-4 py-2">
         <Link
           href={"/"}
-          className="text-2xl md:text-3xl text-gray-900 dark:text-white font-semibold transition-colors duration-300"
+          className="text-xl md:text-2xl font-black tracking-tighter transition-all duration-300 hover:scale-105"
         >
-          Portfolio
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-secondary-600">
+            Baibhav Rajkumar
+          </span>
         </Link>
         <div className="flex items-center gap-2 md:order-2">
           <ThemeToggle />
