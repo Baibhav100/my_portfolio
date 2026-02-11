@@ -1,8 +1,9 @@
 import './globals.css'
-import { Inter } from 'next/font/google'
+import { Inter, Dancing_Script } from 'next/font/google'
 import { ThemeProvider } from "./components/ThemeProvider";
 
 const inter = Inter({ subsets: ['latin'] })
+const dancingScript = Dancing_Script({ subsets: ['latin'], variable: '--font-dancing-script' })
 
 export const metadata = {
   title: 'Portfolio Website',
@@ -14,7 +15,7 @@ import SideSocials from "./components/SideSocials";
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${inter.className} ${dancingScript.variable}`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SideSocials />
           {children}
