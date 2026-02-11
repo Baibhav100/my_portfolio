@@ -12,41 +12,43 @@ const AnimatedNumbers = dynamic(
 const achievementsList = [
   {
     metric: "Projects",
-    value: "100",
+    value: "15",
     postfix: "+",
   },
   {
-    prefix: "~",
-    metric: "Users",
-    value: "100,000",
+    metric: "Certifications",
+    value: "5",
+    postfix: "+",
   },
   {
-    metric: "Awards",
-    value: "7",
+    metric: "Skills",
+    value: "25",
+    postfix: "+",
   },
   {
     metric: "Years",
-    value: "5",
+    value: "3",
+    postfix: "+",
   },
 ];
 
 const AchievementsSection = () => {
   return (
     <div className="py-8 px-4 xl:gap-16 sm:py-16 xl:px-16">
-      <div className="sm:border-[#33353F] sm:border rounded-md py-8 px-16 flex flex-col sm:flex-row items-center justify-between">
+      <div className="border border-gray-200 dark:border-white/10 rounded-2xl py-8 px-16 flex flex-col sm:flex-row items-center justify-between bg-gray-50/50 dark:bg-white/5 backdrop-blur-sm shadow-xl shadow-primary-500/5 transition-all duration-300">
         {achievementsList.map((achievement, index) => {
           return (
             <div
               key={index}
               className="flex flex-col items-center justify-center mx-4 my-4 sm:my-0"
             >
-              <h2 className="text-white text-4xl font-bold flex flex-row">
+              <h2 className="text-gray-900 dark:text-white text-4xl font-bold flex flex-row transition-colors duration-300">
                 {achievement.prefix}
                 <AnimatedNumbers
                   includeComma
                   animateToNumber={parseInt(achievement.value)}
                   locale="en-US"
-                  className="text-white text-4xl font-bold"
+                  className="text-gray-900 dark:text-white text-4xl font-bold"
                   configs={(_, index) => {
                     return {
                       mass: 1,
@@ -57,7 +59,7 @@ const AchievementsSection = () => {
                 />
                 {achievement.postfix}
               </h2>
-              <p className="text-[#ADB7BE] text-base">{achievement.metric}</p>
+              <p className="text-gray-500 dark:text-[#ADB7BE] text-base transition-colors duration-300">{achievement.metric}</p>
             </div>
           );
         })}

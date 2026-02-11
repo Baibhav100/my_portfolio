@@ -9,15 +9,15 @@ const experiences = [
     id: 1,
     role: "Web Developer",
     company: "Adventure Code",
-    period: "Jun 2023 - Present",
+    period: "Jun 2023 - July 2025",
     achievements: [
-      "Developed and launched 10+ responsive websites, increasing client satisfaction by 30%.",
-      "Engineered RESTful APIs using Node.js, streamlining backend processes by 20%.",
-      "Optimized application performance, reducing load times by 25%.",
-      "Collaborated with designers and stakeholders to refine UI/UX, enhancing user retention by 15%.",
-      "Mentored a team of junior developers, fostering a culture of innovation and continuous learning."
+      "Developed dynamic websites using React.js, Node.js, MySQL increasing client satisfaction by 30%.",
+      "Eliminated time-consuming backend integrations by building efficient RESTful APIs with Node.js and Express.js.",
+      "Implemented lazy loading, caching that increased page load speed by 40% and improved user retention by 25%.",
+      "Collaborated with cross functional departments (design, product) to develop in UI/UX and drive impactful changes.",
+      "Explored AI tools (Claude.ai, Kimi.ai, Deepseek, ChatGPT) which improved innovative client solutions."
     ],
-    skills: ["React.js", "Node.js", "Next.js", "RESTful APIs", "Team Leadership"]
+    skills: ["React.js", "Node.js", "Next.js", "MySQL", "RESTful APIs", "AI Tools"]
   },
   {
     id: 2,
@@ -25,35 +25,24 @@ const experiences = [
     company: "EKODUS Technologies Pvt Ltd",
     period: "Mar 2022 - Apr 2023",
     achievements: [
-      "Designed and implemented responsive front-end solutions for 5+ large-scale client projects.",
-      "Optimized CSS and JavaScript, reducing rendering issues and ensuring cross-browser compatibility.",
-      "Collaborated with backend teams to integrate REST APIs, enhancing project efficiency by 25%."
+      "Designed and developed responsive websites using Flexbox, CSS and media queries, increasing user engagement by 20%.",
+      "Optimized CSS and JavaScript, reducing load failures and achieving cross-browser compatibility.",
+      "Leveraged Bootstrap components and React libraries for rapid development, cutting project timelines by 25%.",
+      "Partnered with backend teams to streamline CI/CD pipelines and minimize post-deployment bugs."
     ],
-    skills: ["React.js", "JavaScript", "CSS", "REST API Integration", "Cross-browser Compatibility"]
-  },
-  {
-    id: 3,
-    role: "Intern",
-    company: "TechSpark Solutions",
-    period: "July 2021 - Dec 2021",
-    achievements: [
-      "Assisted in the development of an internal employee portal using React.js and Node.js.",
-      "Conducted comprehensive testing, identifying and resolving over 50 critical bugs.",
-      "Gained hands-on experience in Agile practices, sprint planning, and daily stand-ups."
-    ],
-    skills: ["React.js", "Node.js", "Testing", "Agile Methodologies", "Bug Resolution"]
+    skills: ["React.js", "JavaScript", "Tailwind CSS", "Bootstrap", "CI/CD"]
   }
 ];
 
 const ExperienceCard = ({ experience, isExpanded, toggleExpand, isInView, index }) => {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
       transition={{ duration: 0.6, delay: index * 0.2 }}
-      className="mb-8 bg-[#181818] rounded-xl shadow-xl overflow-hidden border border-[#232323]"
+      className="mb-8 bg-gray-50 dark:bg-[#181818] rounded-xl shadow-lg dark:shadow-xl overflow-hidden border border-gray-200 dark:border-[#232323] transition-colors duration-300"
     >
-      <div 
+      <div
         className="p-6 cursor-pointer flex justify-between items-center"
         onClick={toggleExpand}
       >
@@ -62,35 +51,35 @@ const ExperienceCard = ({ experience, isExpanded, toggleExpand, isInView, index 
             <Briefcase className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-white">{experience.role}</h3>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white transition-colors duration-300">{experience.role}</h3>
             <p className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-600 font-medium">
               {experience.company}
             </p>
           </div>
         </div>
         <div className="flex items-center">
-          <div className="mr-4 flex items-center text-[#ADB7BE]">
+          <div className="mr-4 flex items-center text-gray-500 dark:text-[#ADB7BE] transition-colors duration-300">
             <Calendar className="h-4 w-4 mr-1" />
             <span className="text-sm">{experience.period}</span>
           </div>
-          {isExpanded ? 
-            <ChevronUp className="text-primary-400" /> : 
+          {isExpanded ?
+            <ChevronUp className="text-primary-400" /> :
             <ChevronDown className="text-primary-400" />
           }
         </div>
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ height: 0 }}
         animate={{ height: isExpanded ? 'auto' : 0 }}
         transition={{ duration: 0.4, ease: "easeInOut" }}
         className="overflow-hidden"
       >
         <div className="px-6 pb-6">
-          <h4 className="font-semibold text-white mb-3">Key Achievements</h4>
+          <h4 className="font-semibold text-gray-900 dark:text-white mb-3 transition-colors duration-300">Key Achievements</h4>
           <ul className="mb-6 space-y-3">
             {experience.achievements.map((achievement, index) => (
-              <motion.li 
+              <motion.li
                 key={index}
                 initial={{ opacity: 0, x: -20 }}
                 animate={isExpanded ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
@@ -98,20 +87,20 @@ const ExperienceCard = ({ experience, isExpanded, toggleExpand, isInView, index 
                 className="flex items-start"
               >
                 <CheckCircle className="h-5 w-5 text-primary-400 mt-1 mr-3 flex-shrink-0" />
-                <span className="text-[#ADB7BE]">{achievement}</span>
+                <span className="text-gray-600 dark:text-[#ADB7BE] transition-colors duration-300">{achievement}</span>
               </motion.li>
             ))}
           </ul>
           <div>
-            <h4 className="font-semibold text-white mb-3">Skills Applied</h4>
+            <h4 className="font-semibold text-gray-900 dark:text-white mb-3 transition-colors duration-300">Skills Applied</h4>
             <div className="flex flex-wrap gap-2">
               {experience.skills.map((skill, index) => (
-                <motion.span 
+                <motion.span
                   key={index}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={isExpanded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.3, delay: 0.3 + index * 0.07 }}
-                  className="px-4 py-2 bg-[#232323] text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-600 text-sm rounded-lg font-medium border border-[#333333]"
+                  className="px-4 py-2 bg-gray-200 dark:bg-[#232323] text-gray-800 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-primary-400 dark:to-secondary-600 text-sm rounded-lg font-medium border border-gray-300 dark:border-[#333333] transition-colors duration-300"
                 >
                   {skill}
                 </motion.span>
@@ -155,7 +144,7 @@ const ExperienceSection = () => {
   };
 
   return (
-    <section id="experience" ref={sectionRef} className="py-16 bg-[#121212]">
+    <section id="experience" ref={sectionRef} className="py-16 bg-white dark:bg-[#121212] transition-colors duration-300">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -169,7 +158,7 @@ const ExperienceSection = () => {
             </span>
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 mx-auto mb-4"></div>
-          <p className="text-[#ADB7BE] text-lg max-w-2xl mx-auto">
+          <p className="text-gray-600 dark:text-[#ADB7BE] text-lg max-w-2xl mx-auto transition-colors duration-300">
             Over 3+ years building innovative web applications and leading development teams
           </p>
         </motion.div>
@@ -179,7 +168,7 @@ const ExperienceSection = () => {
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="h-full w-0.5 bg-gradient-to-b from-primary-500 to-secondary-500 opacity-30"></div>
             </div>
-            
+
             <div className="relative">
               {experiences.map((exp, index) => (
                 <ExperienceCard

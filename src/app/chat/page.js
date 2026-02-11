@@ -21,96 +21,45 @@ const AIChatWidget = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
-    // This function tokenizes the input and searches for matches
-    const retrieveInformation = (query) => {
-        const lowerCaseQuery = query.toLowerCase();
-
-        // Special handling for specific queries that require a full context.
-        if (lowerCaseQuery.includes('name') || lowerCaseQuery.includes('who are you')) {
-            return "Baibhav Rajkumar";
-        }
-        if (lowerCaseQuery.includes('phone') || lowerCaseQuery.includes('contact')) {
-            return "You can reach Baibhav at: * **Email:** bhaibhav60@gmail.com * **Mobile:** (+91) 8486128114";
-        }
-        if (lowerCaseQuery.includes('skills')) {
-            return "Key Skills: React.js, Next.js, Redux, JavaScript, HTML, CSS, Tailwind, Bootstrap, Node.js, Express.js, REST APIs, MySQL, MongoDB, PHP, Git, Docker, Jenkins, CI/CD, Postman, AWS (EC2, S3), Firebase, Heroku, C, C++, Python, Jest.";
-        }
-        
-        // Revised handling for projects to retrieve all project data.
-        if (lowerCaseQuery.includes('project') || lowerCaseQuery.includes('what have you done')) {
-            const startIndex = knowledgeBase.indexOf("Projects");
-            const endIndex = knowledgeBase.indexOf("Education");
-
-            if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
-                const projects = knowledgeBase.slice(startIndex + 1, endIndex);
-                return projects.join(' ');
-            }
-        }
-        
-        // Handling for Education to retrieve all education data.
-        if (lowerCaseQuery.includes('education') || lowerCaseQuery.includes('degree')) {
-            const startIndex = knowledgeBase.indexOf("Education");
-            const endIndex = knowledgeBase.indexOf("Courses and Certifications");
-
-            if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
-                const education = knowledgeBase.slice(startIndex + 1, endIndex);
-                return education.join(' ');
-            }
-        }
-
-        // A more robust way to check for a general match
-        const queryWords = lowerCaseQuery.split(/\s+/).filter(word => word.length > 2);
-        
-        let bestMatch = null;
-        let highestScore = 0;
-
-        knowledgeBase.forEach(item => {
-            const itemWords = item.toLowerCase().split(/\s+/).filter(word => word.length > 2);
-            const score = queryWords.filter(word => itemWords.some(itemWord => itemWord.includes(word))).length;
-            
-            if (score > highestScore) {
-                highestScore = score;
-                bestMatch = item;
-            }
-        });
-
-        if (bestMatch && highestScore > 0) {
-            return bestMatch;
-        } else {
-            return "I couldn't find information on that topic in my knowledge base.";
-        }
+    // Simplified retrieval: Just join the whole KB as context.
+    const retrieveInformation = () => {
+        return knowledgeBase.join('\n');
     };
 
-    // This function calls the Gemini API to generate a response.
-    const generateContent = async (prompt) => {
-        const apiKey = "AIzaSyASPgRRDdUz4BD9ILUtJtKDBdd731q4Ps4";
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+    // Purely local matching system to replace LLM
+    const findLocalAnswer = (query) => {
+        const lowerCaseQuery = query.toLowerCase();
 
-        // Create a prompt that tells the LLM what to do.
-        const payload = {
-            contents: [{ parts: [{ text: prompt }] }],
-            systemInstruction: {
-                parts: [{ 
-                    text: `You are an AI assistant for a resume. Answer the user's question using only the provided context. If the answer is not in the context, say that you don't have information on that topic. Be concise and friendly.`
-                }]
-            },
-        };
+        // Priority 1: Direct identity/contact matches
+        if (lowerCaseQuery.includes('name') || lowerCaseQuery.includes('who are you')) {
+            return "My name is Baibhav Rajkumar.";
+        }
+        if (lowerCaseQuery.includes('contact') || lowerCaseQuery.includes('email') || lowerCaseQuery.includes('phone') || lowerCaseQuery.includes('mobile')) {
+            return "You can reach Baibhav at baibhavrajkumar1999@gmail.com or (+91) 7086041934.";
+        }
 
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+        // Priority 2: Filter knowledge base for relevant sentences
+        const relevantSnippets = knowledgeBase.filter(item => {
+            const itemLower = item.toLowerCase();
+            // Match any significant word from the query
+            const queryWords = lowerCaseQuery.split(' ').filter(word => word.length > 3);
+            return queryWords.some(word => itemLower.includes(word));
         });
 
-        const result = await response.json();
-        const candidate = result.candidates?.[0];
-
-        if (candidate && candidate.content?.parts?.[0]?.text) {
-            return candidate.content.parts[0].text;
-        } else {
-            console.error("API response error:", result);
-            return "Sorry, I am unable to generate a response at this time.";
+        if (relevantSnippets.length > 0) {
+            // Join the 3 most relevant matches
+            return relevantSnippets.slice(0, 3).join('\n\n');
         }
+
+        // Priority 3: Category based fallback
+        if (lowerCaseQuery.includes('skill')) {
+            return "Key Skills: " + knowledgeBase.find(i => i.includes("React.js, Next.js"));
+        }
+        if (lowerCaseQuery.includes('project') || lowerCaseQuery.includes('work') || lowerCaseQuery.includes('experience')) {
+            return "Baibhav has over 3 years of experience. Recent projects include Vision-Based PC Automation, Speech to Action System, and an Electric Vehicle Data Analysis dashboard.";
+        }
+
+        return "I'm sorry, I couldn't find a specific answer for that in Baibhav's resume. Could you try asking about his skills, experience, or projects?";
     };
 
     const handleSendMessage = async (e) => {
@@ -119,34 +68,23 @@ const AIChatWidget = () => {
 
         const newUserMessage = { sender: 'user', text: userInput };
         setMessages(prevMessages => [...prevMessages, newUserMessage]);
-        
+
         setIsLoading(true);
 
-        // **Step 1: Retrieve relevant information.**
-        const retrievedInfo = retrieveInformation(userInput);
-        
-        // **Step 2: Augment and generate.**
-        // Combine the user's query with the retrieved information to create a prompt.
-        const augmentedPrompt = `User's query: ${userInput}\n\nContext from resume: ${retrievedInfo}`;
-        
-        try {
-            const llmResponse = await generateContent(augmentedPrompt);
-            const botResponse = { sender: 'AI', text: llmResponse };
+        // Simulate a small delay for "thinking" effect
+        setTimeout(() => {
+            const localAnswer = findLocalAnswer(userInput);
+            const botResponse = { sender: 'AI', text: localAnswer };
             setMessages(prevMessages => [...prevMessages, botResponse]);
-        } catch (error) {
-            console.error("Failed to fetch from LLM:", error);
-            const errorResponse = { sender: 'AI', text: "Sorry, I am having trouble connecting right now. Please try again later." };
-            setMessages(prevMessages => [...prevMessages, errorResponse]);
-        } finally {
-            setUserInput('');
             setIsLoading(false);
-        }
+            setUserInput('');
+        }, 600);
     };
 
     return (
         <div className="fixed bottom-6 right-6 z-50">
             {isOpen ? (
-                <div className="w-80 h-96 bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-white/20 transition-all duration-300 transform scale-100 opacity-100">
+                <div className="w-80 h-96 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 dark:border-white/20 transition-all duration-300 transform scale-100 opacity-100">
                     <header className="p-4 bg-gradient-to-r from-purple-800 to-purple-400/70 text-white text-center rounded-t-2xl flex justify-between items-center border-b border-white/20">
                         <div className="flex items-center space-x-2">
                             <div className="w-3 h-3 bg-green-400 rounded-full"></div>
@@ -159,36 +97,56 @@ const AIChatWidget = () => {
                         </button>
                     </header>
 
-                    <div id="chat-window" className="flex-1 p-4 overflow-y-auto space-y-4 bg-gradient-to-b from-white/8 to-transparent">
+                    <div id="chat-window" className="flex-1 p-4 overflow-y-auto space-y-6 bg-gray-50/50 dark:bg-[#0f1115]/50">
                         {messages.map((msg, index) => (
-                            <div key={index} className={`flex ${msg.sender === 'AI' ? 'justify-start' : 'justify-end'}`}>
-                                <div className={`p-3 rounded-2xl max-w-[80%] ${msg.sender === 'AI' ? 'bg-purple-500 text-white backdrop-blur-sm' : 'bg-purple-300 text-gray-600 backdrop-blur-sm'}`}>
-                                    {msg.text}
+                            <div key={index} className={`flex flex-col ${msg.sender === 'AI' ? 'items-start' : 'items-end'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+                                <div className={`flex items-end gap-2 ${msg.sender === 'AI' ? 'flex-row' : 'flex-row-reverse'}`}>
+                                    {/* Avatar/Icon Indicator */}
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${msg.sender === 'AI'
+                                            ? 'bg-purple-600 text-white'
+                                            : 'bg-emerald-500 text-white'
+                                        }`}>
+                                        {msg.sender === 'AI' ? 'AI' : 'U'}
+                                    </div>
+
+                                    {/* Message Bubble */}
+                                    <div className={`px-4 py-2.5 rounded-2xl max-w-[85%] text-sm leading-relaxed shadow-sm transition-all hover:shadow-md ${msg.sender === 'AI'
+                                            ? 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200/50 dark:border-gray-700/50 rounded-bl-sm'
+                                            : 'bg-gradient-to-br from-purple-700 to-indigo-600 text-white rounded-br-sm'
+                                        }`}>
+                                        {msg.text}
+                                    </div>
                                 </div>
+                                <span className="mt-1 text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider font-medium px-8">
+                                    {msg.sender === 'AI' ? 'Assistant' : 'You'}
+                                </span>
                             </div>
                         ))}
                         {isLoading && (
-                            <div className="flex justify-start">
-                                <div className="p-3 rounded-2xl bg-white/20 text-gray-800 backdrop-blur-sm flex space-x-1">
-                                    <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce"></div>
-                                    <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                                    <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                            <div className="flex flex-col items-start animate-pulse">
+                                <div className="flex items-end gap-2">
+                                    <div className="w-6 h-6 rounded-full bg-purple-600/50 flex items-center justify-center text-[10px] text-white font-bold shrink-0">AI</div>
+                                    <div className="px-4 py-3 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200/50 dark:border-gray-700/50 rounded-bl-sm flex space-x-1.5">
+                                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce"></div>
+                                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                                    </div>
                                 </div>
                             </div>
                         )}
                         <div ref={messagesEndRef} />
                     </div>
 
-                    <form onSubmit={handleSendMessage} className="p-3 border-t border-white/20 bg-white/5 backdrop-blur-sm flex items-center gap-2">
+                    <form onSubmit={handleSendMessage} className="p-3 border-t border-gray-200 dark:border-white/20 bg-gray-50 dark:bg-white/5 flex items-center gap-2">
                         <input
                             type="text"
                             value={userInput}
                             onChange={(e) => setUserInput(e.target.value)}
                             placeholder="Ask a question..."
-                            className="flex-1 p-2 bg-white backdrop-blur-sm border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-800 placeholder-gray-600"
+                            className="flex-1 p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                         />
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             disabled={isLoading}
                             className="bg-gradient-to-r from-purple-800 to-purple-600/80 text-white p-2 rounded-xl hover:to-purple-900 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">

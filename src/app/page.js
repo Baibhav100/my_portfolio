@@ -10,15 +10,17 @@ import AIChatWidget from "./components/AIChatWidget";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col bg-[#121212]">
+    <main className="flex min-h-screen flex-col bg-white dark:bg-[#0a0a0a] transition-colors duration-500">
       <Navbar />
-      <div className="container mt-24 mx-auto px-12 py-4">
-        <HeroSection />
-        {/* <AchievementsSection /> */}
-        <AboutSection />
-        <ProjectsSection />
-        <ExperienceSection />
-        <EmailSection />
+      <div className="container mt-24 mx-auto px-6 md:px-12 py-4 max-w-[1400px]">
+        <div className="space-y-16 md:space-y-24">
+          <HeroSection />
+          <AchievementsSection />
+          <AboutSection />
+          <ProjectsSection />
+          <ExperienceSection />
+          <EmailSection />
+        </div>
       </div>
       <Footer />
       {/* This renders the new AI chat widget on the page */}

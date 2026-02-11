@@ -17,7 +17,7 @@ const HeroSection = () => {
           transition={{ duration: 0.5 }}
           className="col-span-8 place-self-center text-center sm:text-left justify-self-start"
         >
-          <h1 className="text-white mb-4 text-4xl sm:text-5xl lg:text-8xl lg:leading-normal font-extrabold">
+          <h1 className="text-gray-900 dark:text-white mb-4 text-4xl sm:text-5xl lg:text-8xl lg:leading-normal font-extrabold transition-colors duration-300">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-600">
               Hello, I&apos;m{" "}
             </span>
@@ -38,47 +38,48 @@ const HeroSection = () => {
               repeat={Infinity}
             />
           </h1>
-          <p className="text-[#ADB7BE] text-base sm:text-lg mb-6 lg:text-1xl text-justify">
-            I am a passionate web developer with a knack for creating dynamic and responsive web applications. I specialize in React.js, Node.js, and have a strong foundation in UI/UX design principles. My goal is to build user-friendly interfaces that enhance the overall user experience.
+          <p className="text-gray-600 dark:text-[#ADB7BE] text-base sm:text-lg mb-6 lg:text-xl text-justify transition-colors duration-300">
+            I am a passionate fullstack developer and AI/ML enthusiast with a knack for creating dynamic and responsive web applications. I specialize in React.js, Node.js, and have a strong foundation in UI/UX design principles. My goal is to build user-friendly interfaces that enhance the overall user experience.
             <br></br>
           </p>
-          <div>
+          <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/#contact"
-              className="px-6 inline-block py-3 w-full sm:w-fit rounded-full mr-4 bg-gradient-to-br from-primary-500 to-secondary-500 hover:bg-slate-200 text-white"
+              className="px-8 py-4 w-full sm:w-fit rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 hover:scale-105 transition-all duration-300 text-white font-bold text-center shadow-lg shadow-primary-500/25"
             >
               Hire Me
             </Link>
             <a
-  href="/Baibhav(short).pdf"
-  download
-  className="px-1 inline-block py-1 w-full sm:w-fit rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 hover:bg-slate-800 text-white mt-3"
->
-  <span className="block bg-[#121212] hover:bg-slate-800 rounded-full px-5 py-2">
-    Download CV
-  </span>
-</a>
-
-   
+              href="/Baibhav_overall.pdf"
+              download
+              className="p-[2px] w-full sm:w-fit rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 hover:scale-105 transition-all duration-300 group shadow-lg shadow-secondary-500/20"
+            >
+              <span className="block bg-white dark:bg-[#0a0a0a] group-hover:bg-slate-50 dark:group-hover:bg-[#121212] text-gray-900 dark:text-white rounded-full px-8 py-3.5 font-bold transition-all duration-300 text-center">
+                Download CV
+              </span>
+            </a>
           </div>
         </motion.div>
         <motion.div
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="col-span-4 place-self-center mt-4 lg:mt-0"
-      >
-        <div className="rounded-full bg-[#181818] w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] relative">
-          <Image
-            src="/images/profile.png"
-            alt="Baibhav's profile photo"
-            className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-            width={400}
-            height={400}
-            priority
-          />
-        </div>
-      </motion.div>
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="col-span-4 flex justify-center items-center mt-8 lg:mt-0"
+        >
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full blur opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+            <div className="rounded-full bg-gray-50 dark:bg-[#0a0a0a] w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] relative transition-colors duration-300 overflow-hidden ring-1 ring-gray-200 dark:ring-white/10">
+              <Image
+                src="/images/profile.png"
+                alt="Baibhav's profile photo"
+                className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+                width={400}
+                height={400}
+                priority
+              />
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
