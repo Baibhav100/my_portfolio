@@ -6,7 +6,7 @@ import { knowledgeBase } from '../../data/knowledgeBase';
 const AIChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { sender: 'AI', text: "Hello! I&apos;m an AI assistant. I can answer questions about Baibhav&apos;s professional background and skills. What would you like to know?" }
+        { sender: 'AI', text: "Hello! I'm an AI assistant. I can answer questions about Baibhav's professional background and skills. What would you like to know?" }
     ]);
     const [userInput, setUserInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -170,7 +170,7 @@ const AIChatWidget = () => {
                         className="p-4 bg-gradient-to-r from-purple-800 to-purple-600 text-white rounded-full shadow-lg hover:to-purple-900 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 backdrop-blur-sm border border-white/20"
                     >
                         <img
-                            src="images/Profile.png"
+                            src="/images/profile.png"
                             alt="icon"
                             className="w-7 h-7 object-contain"
                         />
