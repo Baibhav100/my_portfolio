@@ -26,7 +26,7 @@ const SideSocials = () => {
     ];
 
     return (
-        <div className="fixed left-0 top-1/2 -translate-y-1/2 z-[100] hidden lg:flex flex-col gap-4">
+        <div className="fixed left-0 top-1/2 -translate-y-1/2 z-[100] flex flex-col gap-4 scale-75 sm:scale-100 origin-left">
             {/* Container with Glassmorphism */}
             <motion.div
                 initial={{ x: -100, opacity: 0 }}

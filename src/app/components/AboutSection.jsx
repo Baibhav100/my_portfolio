@@ -144,10 +144,10 @@ const AboutSection = () => {
               {/* Wallpaper Image */}
               <div className="absolute inset-0 z-0">
                 <Image
-                  src="/images/Profile.jpg"
+                  src="/images/Baibhav.png"
                   fill
                   alt="Wallpaper"
-                  className="object-cover object-top opacity-30 grayscale-[0.4]"
+                  className="object-cover object-top opacity-40 grayscale-[0.2]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-transparent"></div>
               </div>

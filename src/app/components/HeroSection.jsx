@@ -66,17 +66,21 @@ const HeroSection = () => {
           transition={{ duration: 0.5 }}
           className="col-span-4 flex justify-center items-center mt-8 lg:mt-0"
         >
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full blur opacity-40 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-            <div className="rounded-full bg-gray-50 dark:bg-[#0a0a0a] w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] relative transition-colors duration-300 overflow-hidden ring-1 ring-gray-200 dark:ring-white/10">
+          <div className="relative group p-4">
+            {/* Radiant Background Glow */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary-500/30 to-secondary-500/30 rounded-full blur-3xl animate-pulse"></div>
+
+            <div className="relative z-10">
               <Image
-                src="/images/profile.png"
-                alt="Baibhav's profile photo"
-                className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                width={400}
-                height={400}
+                src="/images/Baibhav.png"
+                alt="Baibhav Rajkumar"
+                className="drop-shadow-[0_0_15px_rgba(168,85,247,0.8)] filter transition-all duration-500 group-hover:scale-105"
+                width={450}
+                height={450}
                 priority
               />
+              {/* Optional: Second layer of drop-shadow for increased radiance */}
+              <div className="absolute inset-0 drop-shadow-[0_0_30px_rgba(59,130,246,0.4)] pointer-events-none"></div>
             </div>
           </div>
         </motion.div>
