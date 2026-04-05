@@ -2,111 +2,194 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Sparkles } from 'lucide-react';
-import { knowledgeBase } from '../../data/knowledgeBase';
+import { knowledgeEntries, greetingPatterns, thankPatterns } from '../../data/knowledgeBase';
+
+// ─── Local RAG Engine ───
+// Scores each knowledge entry against the user query using keyword matching,
+// then returns the top-ranked responses as natural-sounding answers.
+
+// Stopwords — common function words that should not influence scoring
+const STOPWORDS = new Set([
+    'what', 'is', 'are', 'was', 'were', 'the', 'a', 'an', 'do', 'does', 'did',
+    'how', 'can', 'could', 'would', 'should', 'will', 'may', 'might',
+    'your', 'you', 'his', 'her', 'my', 'our', 'their', 'its',
+    'me', 'him', 'them', 'us', 'we', 'he', 'she', 'it', 'they',
+    'have', 'has', 'had', 'been', 'be', 'being',
+    'this', 'that', 'these', 'those', 'which', 'who', 'whom',
+    'of', 'in', 'on', 'at', 'to', 'for', 'with', 'by', 'from', 'up', 'out',
+    'and', 'or', 'but', 'not', 'no', 'so', 'if', 'then', 'than',
+    'very', 'just', 'also', 'some', 'any', 'all', 'more', 'most', 'other',
+    'please', 'tell', 'know', 'about', 'like', 'get', 'got', 'give', 'want',
+]);
+
+const tokenize = (text) => {
+    return text
+        .toLowerCase()
+        .replace(/[^a-z0-9\s/+#.]/g, ' ')
+        .split(/\s+/)
+        .filter(w => w.length > 1 && !STOPWORDS.has(w));
+};
+
+const scoreEntry = (queryTokens, entry) => {
+    let score = 0;
+    const queryJoined = queryTokens.join(' ');
+
+    for (const keyword of entry.keywords) {
+        const kwTokens = tokenize(keyword);
+
+        // Exact phrase match (highest weight)
+        if (queryJoined.includes(keyword.toLowerCase())) {
+            score += 10;
+            continue;
+        }
+
+        // Individual token matches
+        for (const kwToken of kwTokens) {
+            for (const qToken of queryTokens) {
+                if (qToken === kwToken) {
+                    score += 5; // exact word match
+                } else if (qToken.length > 3 && kwToken.includes(qToken)) {
+                    score += 2; // partial match (query token inside keyword)
+                } else if (kwToken.length > 3 && qToken.includes(kwToken)) {
+                    score += 2; // partial match (keyword token inside query)
+                }
+            }
+        }
+    }
+
+    return score;
+};
+
+const retrieveAnswer = (query) => {
+    const queryLower = query.toLowerCase().trim();
+    const queryTokens = tokenize(query);
+
+    // Word boundary check helper — prevents "hi" matching inside "his"
+    const hasWord = (text, word) => new RegExp(`\\b${word}\\b`, 'i').test(text);
+
+    // ─── Handle greetings ───
+    const isGreeting = greetingPatterns.some(g => hasWord(queryLower, g)) || hasWord(queryLower, 'hi');
+    if (isGreeting && queryTokens.length <= 4) {
+        return "Hey there! 👋 I'm Baibhav. Ask me about my skills, projects, work experience, education, or anything else you'd like to know!";
+    }
+
+    // ─── Handle thank you ───
+    if (thankPatterns.some(t => queryLower.includes(t)) && queryTokens.length <= 6) {
+        return "Glad I could help! 😊 Feel free to ask me anything else about my work or how to get in touch.";
+    }
+
+    // ─── Score all entries ───
+    const scoredEntries = knowledgeEntries
+        .map(entry => ({ ...entry, score: scoreEntry(queryTokens, entry) }))
+        .filter(entry => entry.score > 0)
+        .sort((a, b) => b.score - a.score);
+
+    if (scoredEntries.length === 0) {
+        return "Hmm, I'm not sure about that one. Try asking me about my skills, projects, work experience, education, or certifications!";
+    }
+
+    // ─── Build response ───
+    const topEntry = scoredEntries[0];
+
+    // If the top match is very strong and specific, return just that
+    if (topEntry.score >= 10) {
+        // Check if there's a second high-scoring entry from a different category
+        const secondEntry = scoredEntries.find(
+            (e, i) => i > 0 && e.score >= 5 && e.category !== topEntry.category
+        );
+
+        if (secondEntry) {
+            return `${topEntry.response}\n\n───\n\n${secondEntry.response}`;
+        }
+        return topEntry.response;
+    }
+
+    // If moderate match, return top 1-2 results
+    if (topEntry.score >= 4) {
+        const secondEntry = scoredEntries.find(
+            (e, i) => i > 0 && e.score >= 3 && e.id !== topEntry.id
+        );
+
+        if (secondEntry) {
+            return `${topEntry.response}\n\n───\n\n${secondEntry.response}`;
+        }
+        return topEntry.response;
+    }
+
+    // Weak match — return with a caveat
+    return `${topEntry.response}\n\nFeel free to ask me more specifically about my skills, projects, experience, or education!`;
+};
+
+
+// ─── Chat Widget Component ───
 
 const AIChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { sender: 'AI', text: "Hello! I'm an AI assistant. I can answer questions about Baibhav's professional background and skills. What would you like to know?" }
+        { sender: 'AI', text: "Hey there! 👋 I'm Baibhav. Ask me about my skills, projects, work experience, education, or how to get in touch!" }
     ]);
     const [userInput, setUserInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef(null);
 
-    // Auto-scroll to bottom when new messages are added
     useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
-
-    const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
-    // Simplified retrieval: Just join the whole KB as context.
-    const retrieveInformation = () => {
-        return knowledgeBase.join('\n');
-    };
-
-    // Purely local matching system to replace LLM
-    const findLocalAnswer = (query) => {
-        const lowerCaseQuery = query.toLowerCase();
-        const queryWords = lowerCaseQuery.split(/[\s,?.!]+/).filter(word => word.length > 2);
-
-        // Priority 1: Direct identity/contact matches
-        if (lowerCaseQuery.includes('name') || lowerCaseQuery.includes('who are you')) {
-            return "My name is Baibhav Rajkumar.";
-        }
-        if (lowerCaseQuery.includes('contact') || lowerCaseQuery.includes('email') || lowerCaseQuery.includes('phone') || lowerCaseQuery.includes('mobile')) {
-            return "You can reach Baibhav at baibhavrajkumar1999@gmail.com or (+91) 7086041934.";
-        }
-
-        // Priority 2: Broad Keyword Matching with Context
-        let matchingIndices = new Set();
-
-        knowledgeBase.forEach((item, index) => {
-            const itemLower = item.toLowerCase();
-            if (queryWords.some(word => itemLower.includes(word))) {
-                matchingIndices.add(index);
-                // If it's a short header (like "Education" or "Projects"), include the next items
-                if (item.length < 20) {
-                    for (let i = 1; i <= 3; i++) {
-                        if (index + i < knowledgeBase.length) matchingIndices.add(index + i);
-                    }
-                }
-            }
-        });
-
-        if (matchingIndices.size > 0) {
-            const result = Array.from(matchingIndices)
-                .sort((a, b) => a - b)
-                .map(index => knowledgeBase[index])
-                .filter(item => item.length > 5) // Filter out very short remnants
-                .slice(0, 6); // Cap the response length
-
-            return result.join('\n\n');
-        }
-
-        // Priority 3: Category based fallback (Slightly broader)
-        if (lowerCaseQuery.includes('skill') || lowerCaseQuery.includes('tech') || lowerCaseQuery.includes('stack')) {
-            return "Knowledge Base: " + knowledgeBase.find(i => i.includes("React.js, Next.js"));
-        }
-        if (lowerCaseQuery.includes('project') || lowerCaseQuery.includes('work') || lowerCaseQuery.includes('experience')) {
-            return "Baibhav has 3+ years of experience. Notable projects: Vision-Based PC Automation, Speech to Action System, YouTube Clone, and Dating App mockup.";
-        }
-        if (lowerCaseQuery.includes('education') || lowerCaseQuery.includes('college') || lowerCaseQuery.includes('study')) {
-            return "Baibhav holds an MCA from USTM (2023) and a BCA from K C Das Commerce College (2021).";
-        }
-
-        return "I couldn't find a direct match. Baibhav specializes in Fullstack Development (React/Next.js/Node.js) and AI/ML. Try asking about his specific projects, education, or skills!";
-    };
+    }, [messages]);
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
         if (userInput.trim() === '' || isLoading) return;
 
         const newUserMessage = { sender: 'user', text: userInput };
-        setMessages(prevMessages => [...prevMessages, newUserMessage]);
-
+        setMessages(prev => [...prev, newUserMessage]);
+        const currentInput = userInput;
+        setUserInput('');
         setIsLoading(true);
 
-        // Simulate a small delay for "thinking" effect
+        // Simulate a natural thinking delay
         setTimeout(() => {
-            const localAnswer = findLocalAnswer(userInput);
-            const botResponse = { sender: 'AI', text: localAnswer };
-            setMessages(prevMessages => [...prevMessages, botResponse]);
+            const answer = retrieveAnswer(currentInput);
+            setMessages(prev => [...prev, { sender: 'AI', text: answer }]);
             setIsLoading(false);
-            setUserInput('');
-        }, 600);
+        }, 500 + Math.random() * 400);
+    };
+
+    // ─── Format message text with line breaks and bullet points ───
+    const formatMessage = (text) => {
+        return text.split('\n').map((line, i) => {
+            if (line.trim() === '───') {
+                return <hr key={i} className="my-3 border-gray-200 dark:border-gray-700" />;
+            }
+            if (line.startsWith('•')) {
+                return (
+                    <div key={i} className="flex items-start gap-2 py-0.5">
+                        <span className="text-purple-400 mt-0.5 shrink-0">•</span>
+                        <span>{line.slice(1).trim()}</span>
+                    </div>
+                );
+            }
+            if (/^\d+\./.test(line.trim())) {
+                return (
+                    <div key={i} className="py-1 font-medium">
+                        {line}
+                    </div>
+                );
+            }
+            if (line.trim() === '') {
+                return <div key={i} className="h-1" />;
+            }
+            return <div key={i} className="py-0.5">{line}</div>;
+        });
     };
 
     return (
         <div className="fixed bottom-6 right-6 z-50">
             {isOpen ? (
-                <div className="w-80 h-96 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 dark:border-white/20 transition-all duration-300 transform scale-100 opacity-100">
+                <div className="w-[340px] sm:w-96 h-[500px] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 dark:border-white/20 transition-all duration-300 transform scale-100 opacity-100">
                     <header className="p-4 bg-gradient-to-r from-purple-800 to-purple-400/70 text-white text-center rounded-t-2xl flex justify-between items-center border-b border-white/20">
                         <div className="flex items-center space-x-2">
-                            <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                            <h1 className="text-md">Baibhav&apos;s AI Assistant</h1>
+                            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                            <h1 className="text-md font-medium">Baibhav&apos;s AI Assistant</h1>
                         </div>
                         <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white transition-colors duration-200 focus:outline-none">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -119,20 +202,17 @@ const AIChatWidget = () => {
                         {messages.map((msg, index) => (
                             <div key={index} className={`flex flex-col ${msg.sender === 'AI' ? 'items-start' : 'items-end'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
                                 <div className={`flex items-end gap-2 ${msg.sender === 'AI' ? 'flex-row' : 'flex-row-reverse'}`}>
-                                    {/* Avatar/Icon Indicator */}
                                     <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${msg.sender === 'AI'
                                         ? 'bg-purple-600 text-white'
                                         : 'bg-emerald-500 text-white'
                                         }`}>
                                         {msg.sender === 'AI' ? 'AI' : 'U'}
                                     </div>
-
-                                    {/* Message Bubble */}
                                     <div className={`px-4 py-2.5 rounded-2xl max-w-[85%] text-sm leading-relaxed shadow-sm transition-all hover:shadow-md ${msg.sender === 'AI'
                                         ? 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200/50 dark:border-gray-700/50 rounded-bl-sm'
                                         : 'bg-gradient-to-br from-purple-700 to-indigo-600 text-white rounded-br-sm'
                                         }`}>
-                                        {msg.text}
+                                        {msg.sender === 'AI' ? formatMessage(msg.text) : msg.text}
                                     </div>
                                 </div>
                                 <span className="mt-1 text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider font-medium px-8">
@@ -155,13 +235,37 @@ const AIChatWidget = () => {
                         <div ref={messagesEndRef} />
                     </div>
 
+                    {/* Quick suggestion chips */}
+                    {messages.length <= 1 && (
+                        <div className="px-3 pb-2 flex flex-wrap gap-1.5">
+                            {["What are your skills?", "Tell me about your projects", "Work experience?", "How to contact you?"].map((suggestion) => (
+                                <button
+                                    key={suggestion}
+                                    onClick={() => {
+                                        setUserInput(suggestion);
+                                        // Auto-send
+                                        const answer = retrieveAnswer(suggestion);
+                                        setMessages(prev => [
+                                            ...prev,
+                                            { sender: 'user', text: suggestion },
+                                            { sender: 'AI', text: answer }
+                                        ]);
+                                    }}
+                                    className="text-xs px-3 py-1.5 rounded-full border border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/30 transition-colors"
+                                >
+                                    {suggestion}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
                     <form onSubmit={handleSendMessage} className="p-3 border-t border-gray-200 dark:border-white/20 bg-gray-50 dark:bg-white/5 flex items-center gap-2">
                         <input
                             type="text"
                             value={userInput}
                             onChange={(e) => setUserInput(e.target.value)}
-                            placeholder="Ask a question..."
-                            className="flex-1 p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                            placeholder="Ask about skills, projects, experience..."
+                            className="flex-1 p-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm"
                         />
                         <button
                             type="submit"

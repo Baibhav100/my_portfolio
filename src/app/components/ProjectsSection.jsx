@@ -6,6 +6,15 @@ import { motion, useInView } from "framer-motion";
 
 const projectsData = [
   {
+    id: 8,
+    title: "ResumeSync - AI Resume Builder",
+    description: "SaaS platform leveraging Gemini AI and Puppeteer to tailor resumes for ATS optimization.",
+    image: "/images/projects/resumeSync.png",
+    tag: ["All", "Web", "AI"],
+    gitUrl: "https://github.com/Baibhav100/resumeSync",
+    previewUrl: "https://resume-sync-eight.vercel.app/",
+  },
+  {
     id: 1,
     title: "Vision-Based PC Automation",
     description: "Built a PC automated system using OpenCv and MediaPipe for hand gesture control.",
@@ -89,13 +98,10 @@ const ProjectsSection = () => {
   };
 
   return (
-    <section id="projects" className="text-gray-900 dark:text-white">
-      <h2 className="text-center text-4xl md:text-5xl font-extrabold mb-4">
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-secondary-600">
-          My Projects
-        </span>
+    <section id="projects" className="text-gray-900 dark:text-white py-12">
+      <h2 className="max-w-7xl pl-4 mx-auto text-2xl md:text-5xl font-bold text-neutral-800 dark:text-neutral-200 font-sans mb-12">
+        My Projects.
       </h2>
-      <div className="w-24 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 mx-auto mb-4"></div>
       <div className="flex flex-row justify-center items-center gap-2 py-6 overflow-x-auto">
         <ProjectTag
           onClick={handleTagChange}
