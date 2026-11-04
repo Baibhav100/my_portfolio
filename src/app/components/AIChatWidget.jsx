@@ -86,7 +86,7 @@ const HITLWidget = ({ onSubmitCorrection, isLoading }) => {
       </div>
       {!expanded && (
         <p className="text-white/40 text-[11px]">
-          The AI couldn't retrieve enough context. Click &quot;Help me improve&quot; to clarify.
+          The AI could not retrieve enough context. Click &quot;Help me improve&quot; to clarify.
         </p>
       )}
       {expanded && (
