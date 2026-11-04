@@ -83,7 +83,7 @@ export default function ExperienceSection() {
   ];
 
   return (
-    <section id="experience" className="bg-white dark:bg-[#121212] transition-colors duration-300">
+    <section id="experience" className="bg-transparent transition-colors duration-300 py-2">
       <Timeline data={data} />
     </section>
   );

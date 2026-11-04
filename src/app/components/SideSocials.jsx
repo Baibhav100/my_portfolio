@@ -2,31 +2,41 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Github, Linkedin, MessageCircle } from "lucide-react";
+import { useProjectPreview } from "@/context/ProjectPreviewContext";
 
 const SideSocials = () => {
+    const { isSplit, isExpanded, splitRatio, openUrl } = useProjectPreview();
+
+    if (isExpanded) return null;
+
     const socials = [
         {
             name: "GitHub",
             icon: <Github size={20} />,
             link: "https://github.com/Baibhav100/my_portfolio",
             color: "hover:text-gray-900 dark:hover:text-white",
+            isSplitTarget: true,
         },
         {
             name: "LinkedIn",
             icon: <Linkedin size={20} />,
             link: "https://www.linkedin.com/in/baibhavrajkumar",
             color: "hover:text-blue-600 dark:hover:text-blue-400",
+            isSplitTarget: false,
         },
         {
             name: "WhatsApp",
             icon: <MessageCircle size={20} />,
             link: "https://wa.me/918486128114",
             color: "hover:text-green-500 dark:hover:text-green-400",
+            isSplitTarget: false,
         },
     ];
 
     return (
-        <div className="fixed left-0 top-1/2 -translate-y-1/2 z-[100] flex flex-col gap-4 scale-75 sm:scale-100 origin-left">
+        <div className={`fixed left-0 top-1/2 -translate-y-1/2 z-[100] flex flex-col gap-4 origin-left transition-all duration-300 ${
+            isSplit ? (splitRatio < 40 ? "hidden" : "scale-75") : "scale-75 sm:scale-100"
+        }`}>
             {/* Container with Glassmorphism */}
             <motion.div
                 initial={{ x: -100, opacity: 0 }}
@@ -38,17 +48,23 @@ const SideSocials = () => {
                     <motion.a
                         key={index}
                         href={social.link}
-                        target="_blank"
+                        target={social.isSplitTarget ? "_self" : "_blank"}
                         rel="noopener noreferrer"
+                        onClick={(e) => {
+                            if (social.isSplitTarget) {
+                                e.preventDefault();
+                                openUrl(social.link, social.name);
+                            }
+                        }}
                         whileHover={{ scale: 1.2, x: 5 }}
                         whileTap={{ scale: 0.9 }}
-                        className={`text-gray-600 dark:text-gray-400 transition-all ${social.color} relative group`}
+                        className={`text-gray-600 dark:text-gray-400 transition-all ${social.color} relative group cursor-pointer`}
                     >
                         {social.icon}
 
                         {/* Tooltip */}
                         <span className="absolute left-12 top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-800 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                            {social.name}
+                            {social.isSplitTarget ? `${social.name} (Split View)` : social.name}
                         </span>
                     </motion.a>
                 ))}

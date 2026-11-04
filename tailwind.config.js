@@ -15,7 +15,8 @@ module.exports = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       fontFamily: {
-        cursive: ["var(--font-dancing-script)", "cursive"],
+        sans: ["var(--font-sans)", "Plus Jakarta Sans", "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
+        display: ["var(--font-sans)", "Plus Jakarta Sans", "Inter", "sans-serif"],
       },
       colors: {
         ...colors,

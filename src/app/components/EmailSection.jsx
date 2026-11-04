@@ -4,6 +4,7 @@ import GithubIcon from "../../../public/github-icon.svg";
 import LinkedinIcon from "../../../public/linkedin-icon.svg";
 import Link from "next/link";
 import Image from "next/image";
+import { useProjectPreview } from "@/context/ProjectPreviewContext";
 
 // ─── Snackbar Component ───
 const Snackbar = ({ message, type, isVisible, onClose }) => {
@@ -49,6 +50,7 @@ const Snackbar = ({ message, type, isVisible, onClose }) => {
 };
 
 const EmailSection = () => {
+  const { isSplit } = useProjectPreview();
   const [formData, setFormData] = useState({ email: "", subject: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [snackbar, setSnackbar] = useState({ isVisible: false, message: "", type: "success" });
@@ -107,7 +109,11 @@ const EmailSection = () => {
       />
       <section
         id="contact"
-        className="grid md:grid-cols-2 my-12 md:my-12 py-24 gap-4 relative"
+        className={`grid relative transition-all duration-300 ${
+          isSplit
+            ? "grid-cols-1 my-4 py-4 gap-6"
+            : "grid-cols-1 md:grid-cols-2 my-4 sm:my-6 py-6 sm:py-8 gap-6"
+        }`}
       >
         <div className="bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary-900/30 dark:from-primary-900 to-transparent rounded-full h-80 w-80 z-0 blur-3xl absolute top-3/4 -left-4 transform -translate-x-1/2 -translate-1/2 pointer-events-none"></div>
         <div className="z-10">

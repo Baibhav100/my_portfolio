@@ -21,6 +21,7 @@ export const LinkPreview = ({
   layout = "fixed",
   isStatic = false,
   imageSrc = "",
+  onClick,
 }) => {
   let src;
   if (!isStatic) {
@@ -83,9 +84,15 @@ export const LinkPreview = ({
       >
         <HoverCardPrimitive.Trigger
           onMouseMove={handleMouseMove}
-          className={cn("text-black dark:text-white", className)}
+          className={cn("text-black dark:text-white cursor-pointer", className)}
           href={url}
           target="_blank"
+          onClick={(e) => {
+            if (onClick) {
+              e.preventDefault();
+              onClick(e);
+            }
+          }}
         >
           {children}
         </HoverCardPrimitive.Trigger>

@@ -3,86 +3,15 @@ import React, { useState, useRef } from "react";
 import ProjectCard from "./ProjectCard";
 import ProjectTag from "./ProjectTag";
 import { motion, useInView } from "framer-motion";
-
-const projectsData = [
-  {
-    id: 8,
-    title: "ResumeSync - AI Resume Builder",
-    description: "SaaS platform leveraging Gemini AI and Puppeteer to tailor resumes for ATS optimization.",
-    image: "/images/projects/resumeSync.png",
-    tag: ["All", "Web", "AI"],
-    gitUrl: "https://github.com/Baibhav100/resumeSync",
-    previewUrl: "https://resume-sync-eight.vercel.app/",
-  },
-  {
-    id: 1,
-    title: "Vision-Based PC Automation",
-    description: "Built a PC automated system using OpenCv and MediaPipe for hand gesture control.",
-    image: "/images/projects/computer_vision.jpg",
-    tag: ["All", "Web", "AI"],
-    gitUrl: "https://github.com/Baibhav100/vision_based_pc_automation",
-    previewUrl: "#",
-  },
-  {
-    id: 2,
-    title: "Speech to Action System",
-    description: "AI system that triggers computer actions based on voice commands using Google Speech Recognition.",
-    image: "/images/projects/action.jpg", // Using portfolio as placeholder for Speech to Action
-    tag: ["All", "Web", "AI"],
-    gitUrl: "https://github.com/Baibhav100/speech_to_action_system",
-    previewUrl: "#",
-  },
-  {
-    id: 3,
-    title: "LOOKIT - YouTube Clone",
-    description: "A youtube clone application built with React.js and RapidAPI.",
-    image: "/images/projects/lookit.png",
-    tag: ["All", "Web"],
-    gitUrl: "https://github.com/Baibhav100/Youtube_clone",
-    previewUrl: "https://youtube-clone-nu-rouge.vercel.app/",
-  },
-  {
-    id: 4,
-    title: "Electric Vehicle Data Analysis",
-    description: "PowerBi dashboard for Electric Vehicle Data Analysis and visualization.",
-    image: "/images/projects/electric.png",
-    tag: ["All", "Data"],
-    gitUrl: "#",
-    previewUrl: "https://app.powerbi.com/groups/me/reports/215ca4af-b50f-4ad5-898c-f2f4b6274f83/d5c89186a0602c70ecbe?experience=power-bi",
-  },
-  {
-    id: 5,
-    title: "Portfolio Website",
-    description: "My personal portfolio website built with Next.js and Tailwind CSS.",
-    image: "/images/projects/portfolio.png",
-    tag: ["All", "Web"],
-    gitUrl: "https://github.com/Baibhav100/my_portfolio",
-    previewUrl: "https://my-portfolio-phi-red-79.vercel.app/",
-  },
-  {
-    id: 6,
-    title: "Foodish - E-commerce",
-    description: "An attractive food ordering website using Reactjs and TailwindCss.",
-    image: "/images/projects/Foodish.png",
-    tag: ["All", "Web"],
-    gitUrl: "https://github.com/Baibhav100/Foodish",
-    previewUrl: "https://foodish-alpha.vercel.app/",
-  },
-  {
-    id: 7,
-    title: "Gaming",
-    description: "Gaming website built with React.js",
-    image: "/images/projects/gaming.png",
-    tag: ["All", "Web"],
-    gitUrl: "https://github.com/Baibhav100/award-winning",
-    previewUrl: "https://award-winning-lime.vercel.app/",
-  },
-];
+import { projectsData } from "@/data/projectsData";
+import { useProjectPreview } from "@/context/ProjectPreviewContext";
+import { Columns, Sparkles } from "lucide-react";
 
 const ProjectsSection = () => {
   const [tag, setTag] = useState("All");
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
+  const { isSplit, activeProject } = useProjectPreview();
 
   const handleTagChange = (newTag) => {
     setTag(newTag);
@@ -93,60 +22,62 @@ const ProjectsSection = () => {
   );
 
   const cardVariants = {
-    initial: { y: 50, opacity: 0 },
+    initial: { y: 30, opacity: 0 },
     animate: { y: 0, opacity: 1 },
   };
 
   return (
-    <section id="projects" className="text-gray-900 dark:text-white py-12">
-      <h2 className="max-w-7xl pl-4 mx-auto text-2xl md:text-5xl font-bold text-neutral-800 dark:text-neutral-200 font-sans mb-12">
-        My Projects.
-      </h2>
-      <div className="flex flex-row justify-center items-center gap-2 py-6 overflow-x-auto">
-        <ProjectTag
-          onClick={handleTagChange}
-          name="All"
-          isSelected={tag === "All"}
-        />
-        <ProjectTag
-          onClick={handleTagChange}
-          name="Web"
-          isSelected={tag === "Web"}
-        />
-        <ProjectTag
-          onClick={handleTagChange}
-          name="AI"
-          isSelected={tag === "AI"}
-        />
-        <ProjectTag
-          onClick={handleTagChange}
-          name="Data"
-          isSelected={tag === "Data"}
-        />
-        <ProjectTag
-          onClick={handleTagChange}
-          name="Mobile"
-          isSelected={tag === "Mobile"}
-        />
+    <section id="projects" className="text-gray-900 dark:text-white py-2 sm:py-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-4">
+        <div>
+          <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-neutral-800 dark:text-neutral-200 font-sans">
+            My Projects.
+          </h2>
+          <p className="text-sm md:text-base text-neutral-500 dark:text-neutral-400 mt-2 flex items-center gap-1.5">
+            <Columns className="w-4 h-4 text-primary-500 shrink-0" />
+            <span>Click any project to open an interactive live preview in split screen.</span>
+          </p>
+        </div>
+
+        {isSplit && activeProject && (
+          <div className="text-xs text-primary-500 dark:text-primary-400 bg-primary-500/10 px-3 py-1.5 rounded-full border border-primary-500/20 font-medium self-start sm:self-auto flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-primary-500 animate-ping" />
+            Active: <span className="font-bold truncate max-w-[150px]">{activeProject.title}</span>
+          </div>
+        )}
       </div>
-      <ul ref={ref} className="grid md:grid-cols-3 gap-8 md:gap-12">
+
+      {/* Tag Filters */}
+      <div className="flex flex-row justify-start sm:justify-center items-center gap-2 py-4 overflow-x-auto scrollbar-none">
+        {["All", "Web", "AI", "Data", "Mobile"].map((tagName) => (
+          <ProjectTag
+            key={tagName}
+            onClick={handleTagChange}
+            name={tagName}
+            isSelected={tag === tagName}
+          />
+        ))}
+      </div>
+
+      {/* Grid of Projects: Responsive based on split state */}
+      <ul
+        ref={ref}
+        className={`grid gap-6 md:gap-8 transition-all duration-300 ${
+          isSplit
+            ? "grid-cols-1 xl:grid-cols-2"
+            : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+        }`}
+      >
         {filteredProjects.length > 0 ? (
           filteredProjects.map((project, index) => (
             <motion.li
-              key={index}
+              key={project.id || index}
               variants={cardVariants}
               initial="initial"
               animate={isInView ? "animate" : "initial"}
-              transition={{ duration: 0.3, delay: index * 0.4 }}
+              transition={{ duration: 0.3, delay: Math.min(index * 0.15, 0.6) }}
             >
-              <ProjectCard
-                key={project.id}
-                title={project.title}
-                description={project.description}
-                imgUrl={project.image}
-                gitUrl={project.gitUrl}
-                previewUrl={project.previewUrl}
-              />
+              <ProjectCard project={project} />
             </motion.li>
           ))
         ) : (
@@ -155,7 +86,6 @@ const ProjectsSection = () => {
           </div>
         )}
       </ul>
-
     </section>
   );
 };

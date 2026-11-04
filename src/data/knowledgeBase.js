@@ -93,6 +93,20 @@ export const knowledgeEntries = [
     keywords: ["experience", "work", "career", "job", "jobs", "professional", "employment", "worked", "company", "companies", "role", "roles", "history"],
     response: "I have 3+ years of professional experience:\n\n1. Web Developer @ Adventure Code (Jun 2023 – Jul 2025) — Full-stack development with React, Node.js, MySQL\n2. Front End Developer @ EKODUS Technologies (Mar 2022 – Apr 2023) — Responsive UI development with React & Bootstrap\n\nI've consistently delivered measurable improvements in performance, user retention, and client satisfaction.",
   },
+  // ─── Project: SprintDesk ───
+  {
+    id: "proj_sprintdesk",
+    category: "Projects",
+    keywords: ["sprintdesk", "sprint desk", "task planner", "planner", "kanban", "task", "tasks", "daily task", "productivity", "todo"],
+    response: "SprintDesk is a daily task planner and Kanban productivity application built with React, TypeScript, Zustand, and Material-UI. It features native drag-and-drop task workflows, local storage persistence, and task filtering. Live at https://sprint-desk-nzff0o9vf-baibhav100s-projects.vercel.app/",
+  },
+  // ─── Project: FitPulse ───
+  {
+    id: "proj_fitpulse",
+    category: "Projects",
+    keywords: ["fitpulse", "fit pulse", "fitness", "affiliate", "workout", "gym", "supplements", "exercise"],
+    response: "FitPulse is a modern fitness affiliate website built with React, Tailwind CSS, and Vite. It showcases curated fitness gear, workout programs, and supplements with responsive navigation. Live at https://fitpulse-sepia.vercel.app/",
+  },
   // ─── Project: ResumeSync ───
   {
     id: "proj_resumesync",
@@ -154,7 +168,7 @@ export const knowledgeEntries = [
     id: "all_projects",
     category: "Projects",
     keywords: ["project", "projects", "built", "build", "created", "showcase", "made"],
-    response: "Here are my key projects:\n\n• ResumeSync — AI resume builder with Gemini AI & Puppeteer\n• Vision-Based PC Automation — Hand gesture control (OpenCV + MediaPipe)\n• Speech to Action — Voice-controlled system (Google Speech Recognition)\n• Lookit — YouTube clone (React.js + RapidAPI)\n• EV Dashboard — Data visualization (Power BI)\n• Foodish — Food ordering app (React.js + Tailwind)\n• Gaming Website — Interactive UI (React.js)\n• This Portfolio — Next.js + Aceternity UI\n\nMost are live — check my GitHub: github.com/Baibhav100",
+    response: "Here are my key projects:\n\n• SprintDesk — Daily task planner & Kanban board (React + Zustand + MUI)\n• FitPulse — Fitness affiliate website (React + Tailwind)\n• ResumeSync — AI resume builder with Gemini AI & Puppeteer\n• Vision-Based PC Automation — Hand gesture control (OpenCV + MediaPipe)\n• Speech to Action — Voice-controlled system (Google Speech Recognition)\n• Lookit — YouTube clone (React.js + RapidAPI)\n• EV Dashboard — Data visualization (Power BI)\n• Foodish — Food ordering app (React.js + Tailwind)\n• Gaming Website — Interactive UI (React.js)\n• This Portfolio — Next.js + Aceternity UI\n\nMost are live — check my GitHub: github.com/Baibhav100",
   },
   // ─── Education ───
   {

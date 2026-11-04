@@ -193,10 +193,9 @@ export default function AboutSection() {
   ));
 
   return (
-    <section id="about" className="overflow-hidden relative">
-
-      <div className="w-full h-full pt-10">
-        <h2 className="max-w-7xl pl-4 mx-auto text-2xl md:text-5xl font-bold text-neutral-800 dark:text-neutral-200 font-sans">
+    <section id="about" className="overflow-hidden relative py-2">
+      <div className="w-full h-full pt-2 sm:pt-4">
+        <h2 className="max-w-7xl pl-4 mx-auto text-2xl md:text-4xl font-bold tracking-tight text-neutral-800 dark:text-neutral-200 font-sans">
           Get to know my expertise.
         </h2>
         <Carousel items={cards} />
